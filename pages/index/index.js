@@ -2,24 +2,21 @@ import a from '../demo/sync_async.js'
 import b from '../demo/nest.js'
 import c from '../demo/combine.js'
 import d from '../demo/network.js'
+// 为了fromEvent示例
+import rxwx from '../../utils/RxWX.js'
 
 //index.js
 //获取应用实例
 const app = getApp()
 
-Page({
+let page ={
   data: {
     motto: 'Hello World',
     userInfo: {},
     hasUserInfo: false,
     canIUse: wx.canIUse('button.open-type.getUserInfo')
   },
-  //事件处理函数
-  bindViewTap: function() {
-    wx.navigateTo({
-      url: '../logs/logs'
-    })
-  },
+
   onLoad: function () {
     if (app.globalData.userInfo) {
       this.setData({
@@ -56,4 +53,12 @@ Page({
       hasUserInfo: true
     })
   }
-})
+}
+// 使用fromEvent绑定事件
+rxwx.fromEvent(page, 'bindViewTap')
+  .debounceTime(1000)
+  .switchMap(() => rxwx.navigateTo({
+    url: '../logs/logs'
+  }))
+  .subscribe()
+Page(page)
